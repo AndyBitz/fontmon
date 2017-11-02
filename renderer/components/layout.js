@@ -39,6 +39,10 @@ export default ({children}) => {
         input {
           color: ${Styles.shades[2]}; 
         }
+
+        img, svg {
+          vertical-align: middle;
+        }
       `}
       </style> 
       <style jsx>

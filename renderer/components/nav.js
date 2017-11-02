@@ -4,29 +4,29 @@ import {Component} from 'react'
 // components
 import Styles from './styles'
 
+// icons
+import ActiveIcon2 from '../static/icons/active-icon.svg'
 
-export default () => (
+
+export default ({ fonts, onFontStatusChange }) => (
   <nav>
     <div className="wrapper">
     <SearchBar />
 
     <List>
       <Head>Fonts</Head>
-      <FontItem>Font-Family 1</FontItem>
-      <FontItem>Font-Family 2</FontItem>
-      <FontItem>Font-Family 3</FontItem>
-      <FontItem>Font-Family 4</FontItem>
-      <FontItem>Font-Family 5</FontItem>
-      <FontItem>Font-Family 6</FontItem>
-      <FontItem>Font-Family 7</FontItem>
-      <FontItem>Font-Family 8</FontItem>
-      <FontItem>Font-Family 9</FontItem>
-      <FontItem>Font-Family 10</FontItem>
-      <FontItem>Font-Family 11</FontItem>
-      <FontItem>Font-Family 12</FontItem>
-      <FontItem>Font-Family 13</FontItem>
-      <FontItem>Font-Family 14</FontItem>
-      <FontItem>Font-Family 15</FontItem>
+      { fonts.map((font, index) => {
+        const onStatus = () => {
+          onFontStatusChange(index, !font.isActive)
+        }
+
+        return (<FontItem
+          key={index}
+          active={font.isActive}
+          onStatus={onStatus}
+          children={`${font.family} ${font.type}`}
+        />)
+      }) }
     </List>
 
     </div>
@@ -48,9 +48,11 @@ export default () => (
   </nav>
 )
 
+
 const List = ({children}) => (
   <div>{children}</div>
 )
+
 
 const Head = ({children}) => (
   <div>
@@ -69,10 +71,15 @@ const Head = ({children}) => (
   </div>
 )
 
-const FontItem = ({children, ...rest}) => (
+
+const FontItem = ({active, onStatus, children, ...rest}) => (
   <div {...rest}>
     <span>{children}</span>
-    <span>A</span>
+    <span
+      className={active ? 'active' : ''}
+      onClick={onStatus}>
+      <ActiveIcon2 />
+    </span>
     <style jsx>
     {`
       div {
@@ -82,10 +89,21 @@ const FontItem = ({children, ...rest}) => (
         cursor: pointer;
         font-size: .9em;
       }
+
+      span :global(svg) {
+        fill: ${Styles.shades[4]};
+        width: 1em;
+        height: 1em;
+      }
+
+      span.active :global(svg) {
+        fill: ${Styles.colors.success};
+      }
     `}
     </style>
   </div>
 )
+
 
 class SearchBar extends Component {
   constructor(props) {
@@ -128,7 +146,7 @@ class SearchBar extends Component {
 
     return (
       <div className={isFocused ? 'is-focused' : ''}>
-        <label for="search">Search</label>
+        <label htmlFor="search">Search</label>
         <input
           onBlur={this.handleBlur}
           onFocus={this.handleFocus}
