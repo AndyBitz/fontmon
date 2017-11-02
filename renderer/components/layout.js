@@ -1,9 +1,27 @@
+// components
+import Styles from './styles'
+
+
 export default ({children}) => {
   return (
-    <main>
+    <main> 
       {children}
       <style jsx global>
       {`
+        @font-face {
+          font-family: 'Roboto';
+          font-style: normal;
+          font-weight: 400;
+          src: local('Roboto'), local('Roboto-Regular'), url(/static/fonts/Roboto-Regular.ttf) format('ttf');
+        }
+
+        @font-face {
+          font-family: 'Roboto Condensed';
+          font-style: normal;
+          font-weight: 700;
+          src: local('Roboto Condensed Bold'), local('RobotoCondensed-Bold'), url(/static/fonts/RobotoCondensed-Bold.ttf) format('ttf');
+        }
+
         * {
           box-sizing: border-box;
         }
@@ -11,8 +29,15 @@ export default ({children}) => {
         html, body {
           margin: 0;
           padding: 0;
-          font-family: sans-serif;
+          font-family: 'Roboto', sans-serif;
           overflow-x: hidden;
+          user-select: none;
+          font-size: 18px;
+          color: ${Styles.shades[2]};
+        }
+
+        input {
+          color: ${Styles.shades[2]}; 
         }
       `}
       </style> 

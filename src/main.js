@@ -54,8 +54,19 @@ const createTrayicon = async (win) => {
   tray.setToolTip('fontmon')
   tray.setContextMenu(contextMenu)
 
+  // TODO: make extra menu item for this on linux
   tray.on('click', () => {
-    win.isVisible() ? null : win.show()
+    if (win.isVisible() === false) {
+      win.show()
+    }
+
+    if (win.isMinimized() === true) {
+      win.restore()
+    }
+
+    if (win.isFocused() === false) {
+      win.focus()
+    }
   })
 
   win.on('close', (event) => {
