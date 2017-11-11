@@ -1,7 +1,7 @@
 {
   "name": "fontmon",
   "version": "1.0.0",
-  "description": "",
+  "description": "A fontmanger made with electron",
   "main": "src/main.js",
   "scripts": {
     "start": "electron .",
