@@ -3,9 +3,10 @@ import {Component} from 'react'
 
 // components
 import Layout from '../components/layout'
-import Nav from '../components/nav'
-import Content from '../components/content'
-import Header from '../components/header'
+import FontList from '../components/font-list'
+
+// lib
+import fontmon from '../lib/fontmon'
 
 
 export default class extends Component {
@@ -14,47 +15,58 @@ export default class extends Component {
   constructor(props) {
     super(props)
 
-    this.onFontStatusChange = this.onFontStatusChange.bind(this)
+    this.onDragEnter = this.onDragEnter.bind(this)
+    this.onDragLeave = this.onDragLeave.bind(this)
+    this.onDragOver = this.onDragOver.bind(this)
+    this.onDrop = this.onDrop.bind(this)
+
+    this.state = {
+      dragging: false,
+      loadedFonts: fontmon.getLoadedFonts()
+    }
   }
 
-  state = { fonts: [] }
-
-  async componentDidMount() {
-    this.setState({
-      fonts: await getAllFonts()
-    })
+  componentDidMount() {
+    document.addEventListener('dragenter', this.onDragEnter, false)
+    document.addEventListener('dragleave', this.onDragLeave, false)
+    document.addEventListener('dragover', this.onDragOver, false)
+    document.addEventListener('drop', this.onDrop, false)
   }
 
-  onFontStatusChange(index, status) {
-    const newFonts = this.state.fonts
+  componentWillUnmount() {
+    document.removeEventListener('dragenter', this.onDragEnter, false)
+    document.removeEventListener('dragleave', this.onDragLeave, false)
+    document.removeEventListener('dragover', this.onDragOver, false)
+    document.removeEventListener('drop', this.onDrop, false)
+  }
 
-    newFonts[index].isActive = status
+  onDragEnter(event) {
+    event.preventDefault()
+  }
 
-    this.setState({
-      fonts: newFonts
-    })
+  onDragLeave(event) {
+    event.preventDefault()
+    this.setState({ dragging: false })
+  }
+
+  onDragOver(event) {
+    event.preventDefault()
+    this.setState({ dragging: true })
+  }
+
+  onDrop(event) {
+    event.preventDefault()
+    this.setState({ dragging: false })
+    fontmon.loadList(event.dataTransfer.files)
   }
 
   render() {
+    const {loadedFonts} = this.state
+
     return (
       <Layout>
-        <Header />
-        <Nav
-          fonts={this.state.fonts}
-          onFontStatusChange={this.onFontStatusChange}
-        />
-        <Content />
+        { loadedFonts[0] ? <FontList fonts={loadedFonts} /> : 'Drag to load font' }
       </Layout>
     )
   }
-}
-
-
-const getAllFonts = async () => {
-  return [
-    {family: 'Roboto', type: 'Regular', isActive: false},
-    {family: 'Roboto', type: 'Bold', isActive: false},
-    {family: 'Roboto', type: 'Italic', isActive: false},
-    {family: 'Roboto', type: 'Bold Italic', isActive: false},
-  ]
 }

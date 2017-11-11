@@ -13,12 +13,6 @@ const isDev = require('electron-is-dev')
 const prepareNext = require('electron-next')
 const { resolve } = require('app-root-path')
 
-// lib
-// const fontmon = require('./lib/fontmon')
-
-// init config
-const config = require('./lib/config')
-
 // globals
 let tray
 

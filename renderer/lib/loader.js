@@ -80,7 +80,7 @@ async function removeFont(font) {
   }
 }
 
-module.exports = {
+export default {
   add: (font) => addFont(font),
   remove: (font) => removeFont(font)
 }
