@@ -13,12 +13,15 @@ const isDev = require('electron-is-dev')
 const prepareNext = require('electron-next')
 const { resolve } = require('app-root-path')
 
-// init config
-const config = require('./lib/config')
+// lib
+const fontmon = require('./lib/fontmon')
 
-config.readConfig()
+fontmon.remove('D:\\Fonts\\GillSans\\GillSans.ttf')
   .then(console.log)
   .catch(console.error)
+
+// init config
+const config = require('./lib/config')
 
 // globals
 let tray

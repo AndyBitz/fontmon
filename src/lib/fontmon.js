@@ -1,5 +1,6 @@
 // packages
-
+const config = require('./config')
+const loader = require('./loader')
 
 
 class Fontmon {
@@ -7,19 +8,19 @@ class Fontmon {
 
   }
 
-  static add() {
+  static async add(path) {
+    return await loader.add(path)
+  }
+
+  static async remove(path) {
+    return await loader.remove(path)
+  }
+
+  static async readDir() {
 
   }
 
-  static remove() {
-
-  }
-
-  static readDir() {
-
-  }
-
-  static readFontFile() {
+  static async readFontFile() {
 
   }
 }
