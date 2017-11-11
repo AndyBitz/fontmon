@@ -24,6 +24,16 @@ class Fontmon {
     return await loader.remove(path)
   }
 
+  static async getFonts() {
+    const files = await this.getFontFiles()
+
+    for (let i in files) {
+      files[i] = await this.getFontMeta(files[i])
+    }
+
+    return files
+  }
+
   static async getFontFiles() {
     const cfg = await config.readConfig()
     const dir = cfg.directory
@@ -58,8 +68,11 @@ class Fontmon {
     return !!file.match(/\.(otf|ttf)$/)
   }
 
-  static async readFontFile() {
-
+  static async getFontMeta(file) {
+    return {
+      path: file,
+      type: undefined // TrueType or OpenType // TODO
+    }
   }
 }
 

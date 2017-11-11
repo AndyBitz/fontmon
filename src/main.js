@@ -14,11 +14,7 @@ const prepareNext = require('electron-next')
 const { resolve } = require('app-root-path')
 
 // lib
-const fontmon = require('./lib/fontmon')
-  fontmon.getFontFiles()
-    .then(console.log)
-    .catch(console.error)
-
+// const fontmon = require('./lib/fontmon')
 
 // init config
 const config = require('./lib/config')
