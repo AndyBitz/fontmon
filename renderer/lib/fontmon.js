@@ -12,6 +12,7 @@ import loader from './loader'
 
 class Fontmon {
   constructor() {
+    this.subscribers = []
     this.loadedFonts = []
   }
 
@@ -19,33 +20,34 @@ class Fontmon {
     return this.loadedFonts
   }
 
-  async add(path) {
+  async add(path, dispatch=true) {
     const status = await loader.add(path)
     if (status.result === 1) {
       this.loadedFonts.push(status.path)
     }
 
+    if (dispatch) {
+      this.dispatchEvent()
+    }
+
     return !!status.result
   }
 
-  async remove(path) {
+  async remove(path, dispatch=true) {
     const status = await loader.remove(path)
     if (status.result === 1) {
-      this.loadedFonts.push(status.path)
+      this.loadedFonts = this.loadedFonts.filter((loadedFont) => {
+        if (loadedFont !== path) {
+          return true
+        }
+      })
+    }
+
+    if (dispatch) {
+      this.dispatchEvent()
     }
 
     return !!status.result
-  }
-
-  async loadList(list) {
-    let fileList = []
-
-    for (let i in list) {
-      const cFileList = await this.recursiveRead(list[i].path)
-      fileList = fileList.concat(cFileList)
-    }
-
-    console.log(fileList)
   }
 
   async recursiveRead(dir) {
@@ -67,11 +69,48 @@ class Fontmon {
       if (stats.isDirectory()) {
         files = files.concat(await this.recursiveRead(abs))
       } else {
-        files.push(abs)
+        if (this.isFont(abs)) {
+          files.push(abs)
+        }
       }
     }
 
     return files
+  }
+
+  addEventListener(listener) {
+    this.subscribers.push(listener)
+  }
+
+  removeEventListener(listener) {
+    this.subscribers = this.subscribers.filter((sub) => {
+      if (sub !== listener) {
+        return sub
+      }
+    })
+  }
+
+  dispatchEvent() {
+    this.subscribers.map(sub => sub())
+  }
+
+  async loadList(list) {
+    let fileList = []
+
+    for (let i in list) {
+      const cFileList = await this.recursiveRead(list.item(i).path)
+      fileList = fileList.concat(cFileList)
+    }
+
+    fileList.map((file) => {
+      this.add(file, false)
+    })
+
+    this.dispatchEvent()
+  }
+
+  isFont(file) {
+    return !!file.match(/\.(otf|otc|ttf|ttc|fon)$/)
   }
 
   /*
@@ -90,11 +129,6 @@ class Fontmon {
     const dir = cfg.directory
 
     return await this.recursiveRead(dir)
-  }
-
-  static isFont(file) {
-    const fileFormats = ['ttf', 'otf']
-    return !!file.match(/\.(otf|ttf)$/)
   }
 
   static async getFontMeta(file) {

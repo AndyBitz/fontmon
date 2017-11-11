@@ -15,6 +15,7 @@ export default class extends Component {
   constructor(props) {
     super(props)
 
+    this.onFontmonChange = this.onFontmonChange.bind(this)
     this.onDragEnter = this.onDragEnter.bind(this)
     this.onDragLeave = this.onDragLeave.bind(this)
     this.onDragOver = this.onDragOver.bind(this)
@@ -31,6 +32,8 @@ export default class extends Component {
     document.addEventListener('dragleave', this.onDragLeave, false)
     document.addEventListener('dragover', this.onDragOver, false)
     document.addEventListener('drop', this.onDrop, false)
+
+    fontmon.addEventListener(this.onFontmonChange)
   }
 
   componentWillUnmount() {
@@ -38,6 +41,14 @@ export default class extends Component {
     document.removeEventListener('dragleave', this.onDragLeave, false)
     document.removeEventListener('dragover', this.onDragOver, false)
     document.removeEventListener('drop', this.onDrop, false)
+
+    fontmon.removeEventListener(this.onFontmonChange)
+  }
+
+  onFontmonChange(event) {
+    this.state({
+      loadedFonts: fontmon.getLoadedFonts()
+    })
   }
 
   onDragEnter(event) {
