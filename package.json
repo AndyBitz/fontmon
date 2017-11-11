@@ -5,7 +5,8 @@
   "main": "src/main.js",
   "scripts": {
     "start": "electron .",
-    "build": "next build renderer && next export renderer",
+    "rebuild": "./node_modules/.bin/electron-rebuild.cmd",
+    "build": "npm run rebuild && next build renderer && next export renderer",
     "dist": "npm run build && build --dir"
   },
   "build": {
@@ -19,8 +20,12 @@
   "author": "Andy Bitz",
   "license": "ISC",
   "babel": {
-    "presets": [ "next/babel" ],
-    "plugins": [ "inline-react-svg" ]
+    "presets": [
+      "next/babel"
+    ],
+    "plugins": [
+      "inline-react-svg"
+    ]
   },
   "dependencies": {
     "app-root-path": "^2.0.1",
@@ -29,8 +34,9 @@
   },
   "devDependencies": {
     "babel-plugin-inline-react-svg": "^0.4.0",
-    "electron": "^1.7.9",
+    "electron": "^1.8.2-beta.2",
     "electron-builder": "^19.43.4",
+    "electron-rebuild": "^1.6.0",
     "next": "^4.1.4",
     "react": "^16.0.0",
     "react-dom": "^16.0.0"
