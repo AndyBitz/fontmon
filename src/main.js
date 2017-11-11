@@ -15,10 +15,10 @@ const { resolve } = require('app-root-path')
 
 // lib
 const fontmon = require('./lib/fontmon')
+  fontmon.getFontFiles()
+    .then(console.log)
+    .catch(console.error)
 
-fontmon.remove('D:\\Fonts\\GillSans\\GillSans.ttf')
-  .then(console.log)
-  .catch(console.error)
 
 // init config
 const config = require('./lib/config')
