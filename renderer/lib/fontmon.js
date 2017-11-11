@@ -1,13 +1,8 @@
 // native
-const {promisify} = require('util')
-const {resolve, join} = require('path')
-const fs = require('fs')
-
-const readdir = promisify(fs.readdir)
-const stat = promisify(fs.stat)
+const {resolve, join, parse} = require('path')
 
 // packages
-import loader from './loader'
+const loader = require('electron').remote.require('./lib/loader')
 
 
 class Fontmon {
@@ -23,11 +18,17 @@ class Fontmon {
   async add(path, dispatch=true) {
     const status = await loader.add(path)
     if (status.result === 1) {
-      this.loadedFonts.push(status.path)
+      this.loadedFonts.push({
+        path: status.path,
+        remove: () => this.remove(status.path),
+        fileName: parse(status.path).base
+      })
     }
 
     if (dispatch) {
-      this.dispatchEvent()
+      this.dispatchEvent(status)
+    } else {
+      return status
     }
 
     return !!status.result
@@ -37,45 +38,38 @@ class Fontmon {
     const status = await loader.remove(path)
     if (status.result === 1) {
       this.loadedFonts = this.loadedFonts.filter((loadedFont) => {
-        if (loadedFont !== path) {
+        if (loadedFont.path !== path) {
           return true
         }
       })
     }
 
     if (dispatch) {
-      this.dispatchEvent()
+      this.dispatchEvent(status)
+    } else {
+      return status
     }
 
     return !!status.result
   }
 
-  async recursiveRead(dir) {
-    const cstat = await stat(dir)
+  async loadList(list) {
+    let fileList = []
+    let statusList = []
 
-    if (cstat.isDirectory() === false) {
-      return [dir]
+    const length = list.length
+
+    for (let i=0; i < length; i++) {
+      const cFileList = await loader.read(list.item(i).path)
+      fileList = fileList.concat(cFileList)
     }
 
-    const cdir = await readdir(dir)
-
-    let files = []
-
-    for (let i in cdir) {
-      const name = cdir[i]
-      const abs = join(dir, name)
-      const stats = await stat(abs)
-
-      if (stats.isDirectory()) {
-        files = files.concat(await this.recursiveRead(abs))
-      } else {
-        if (this.isFont(abs)) {
-          files.push(abs)
-        }
-      }
+    for (let i in fileList) {
+      const file = fileList[i]
+      statusList.push(await this.add(file, false))
     }
 
-    return files
+    this.dispatchEvent(statusList)
   }
 
   addEventListener(listener) {
@@ -90,27 +84,8 @@ class Fontmon {
     })
   }
 
-  dispatchEvent() {
-    this.subscribers.map(sub => sub())
-  }
-
-  async loadList(list) {
-    let fileList = []
-
-    for (let i in list) {
-      const cFileList = await this.recursiveRead(list.item(i).path)
-      fileList = fileList.concat(cFileList)
-    }
-
-    fileList.map((file) => {
-      this.add(file, false)
-    })
-
-    this.dispatchEvent()
-  }
-
-  isFont(file) {
-    return !!file.match(/\.(otf|otc|ttf|ttc|fon)$/)
+  dispatchEvent(args) {
+    this.subscribers.map(sub => sub(args))
   }
 
   /*

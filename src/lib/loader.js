@@ -1,5 +1,10 @@
 const {execFile} = require('child_process')
 const path = require('path')
+const {promisify} = require('util')
+const fs = require('fs')
+
+const readdir = promisify(fs.readdir)
+const stat = promisify(fs.stat)
 
 
 const asyncExec = (cmd, args) => new Promise((res, rej) => {
@@ -80,7 +85,40 @@ async function removeFont(font) {
   }
 }
 
-export default {
+async function readFontFilesRecursive(dir) {
+  const cstat = await stat(dir)
+
+  if (cstat.isDirectory() === false) {
+    return [dir]
+  }
+
+  const cdir = await readdir(dir)
+
+  let files = []
+
+  for (let i in cdir) {
+    const name = cdir[i]
+    const abs = path.join(dir, name)
+    const stats = await stat(abs)
+
+    if (stats.isDirectory()) {
+      files = files.concat(await readFontFilesRecursive(abs))
+    } else {
+      if (isFont(abs)) {
+        files.push(abs)
+      }
+    }
+  }
+
+  return files
+}
+
+function isFont(file) {
+  return !!file.match(/\.(otf|otc|ttf|ttc|fon)$/)
+}
+
+module.exports = {
   add: (font) => addFont(font),
-  remove: (font) => removeFont(font)
+  remove: (font) => removeFont(font),
+  read: (dir) => readFontFilesRecursive(dir)
 }

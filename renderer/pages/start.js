@@ -5,9 +5,6 @@ import {Component} from 'react'
 import Layout from '../components/layout'
 import FontList from '../components/font-list'
 
-// lib
-import fontmon from '../lib/fontmon'
-
 
 export default class extends Component {
   // static async getInitialProps() {}
@@ -22,18 +19,27 @@ export default class extends Component {
     this.onDrop = this.onDrop.bind(this)
 
     this.state = {
+      isServer: true,
       dragging: false,
-      loadedFonts: fontmon.getLoadedFonts()
+      loadedFonts: []
     }
   }
 
-  componentDidMount() {
+  async componentDidMount() {
+    const fontmon = await import('../lib/fontmon')
+    this.fontmon = fontmon.default
+
+    this.setState({
+      isServer: false,
+      loadedFonts: this.fontmon.getLoadedFonts()
+    })
+
     document.addEventListener('dragenter', this.onDragEnter, false)
     document.addEventListener('dragleave', this.onDragLeave, false)
     document.addEventListener('dragover', this.onDragOver, false)
     document.addEventListener('drop', this.onDrop, false)
 
-    fontmon.addEventListener(this.onFontmonChange)
+    this.fontmon.addEventListener(this.onFontmonChange)
   }
 
   componentWillUnmount() {
@@ -42,12 +48,14 @@ export default class extends Component {
     document.removeEventListener('dragover', this.onDragOver, false)
     document.removeEventListener('drop', this.onDrop, false)
 
-    fontmon.removeEventListener(this.onFontmonChange)
+    this.fontmon.removeEventListener(this.onFontmonChange)
   }
 
-  onFontmonChange(event) {
-    this.state({
-      loadedFonts: fontmon.getLoadedFonts()
+  onFontmonChange(status) {
+    console.log('status', status)
+
+    this.setState({
+      loadedFonts: this.fontmon.getLoadedFonts()
     })
   }
 
@@ -68,11 +76,15 @@ export default class extends Component {
   onDrop(event) {
     event.preventDefault()
     this.setState({ dragging: false })
-    fontmon.loadList(event.dataTransfer.files)
+    this.fontmon.loadList(event.dataTransfer.files)
   }
 
   render() {
-    const {loadedFonts} = this.state
+    const {loadedFonts, isServer} = this.state
+
+    if (isServer) {
+      return null
+    }
 
     return (
       <Layout>
