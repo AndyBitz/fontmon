@@ -7,17 +7,17 @@ import FontList from '../components/font-list'
 
 
 export default class extends Component {
-  // static async getInitialProps() {}
-
   constructor(props) {
     super(props)
 
+    // bindings
     this.onFontmonChange = this.onFontmonChange.bind(this)
     this.onDragEnter = this.onDragEnter.bind(this)
     this.onDragLeave = this.onDragLeave.bind(this)
     this.onDragOver = this.onDragOver.bind(this)
     this.onDrop = this.onDrop.bind(this)
 
+    // default state
     this.state = {
       isServer: true,
       dragging: false,
@@ -26,31 +26,36 @@ export default class extends Component {
   }
 
   async componentDidMount() {
+    // load fontmon lib
     const fontmon = await import('../lib/fontmon')
     this.fontmon = fontmon.default
 
-    this.setState({
-      isServer: false,
-      loadedFonts: this.fontmon.getLoadedFonts()
-    })
+    // update isServer to false
+    this.setState({ isServer: false })
 
+    // drag events
     document.addEventListener('dragenter', this.onDragEnter, false)
     document.addEventListener('dragleave', this.onDragLeave, false)
     document.addEventListener('dragover', this.onDragOver, false)
     document.addEventListener('drop', this.onDrop, false)
 
-    this.fontmon.addEventListener(this.onFontmonChange)
+    // fontmon changes
+    this.fontmon.subscribe(this.onFontmonChange)
   }
 
   componentWillUnmount() {
+    //remove drag events
     document.removeEventListener('dragenter', this.onDragEnter, false)
     document.removeEventListener('dragleave', this.onDragLeave, false)
     document.removeEventListener('dragover', this.onDragOver, false)
     document.removeEventListener('drop', this.onDrop, false)
 
-    this.fontmon.removeEventListener(this.onFontmonChange)
+    // destroy fontmon subscribers
+    this.fontmon.unsubscribe(this.onFontmonChange)
   }
 
+  // call whenever a font gets added or removed
+  // to update the state
   onFontmonChange(status) {
     this.setState({
       loadedFonts: this.fontmon.getLoadedFonts()
@@ -74,12 +79,16 @@ export default class extends Component {
   onDrop(event) {
     event.preventDefault()
     this.setState({ dragging: false })
+
+    // load font when it's dropped on the window
     this.fontmon.loadList(event.dataTransfer.files)
   }
 
   render() {
     const {loadedFonts, isServer} = this.state
 
+    // show nothing if on server
+    // to prevent errors with electron.remote e.g.
     if (isServer) {
       return null
     }

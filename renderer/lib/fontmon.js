@@ -60,11 +60,11 @@ class Fontmon {
     this.dispatchEvent(statusList)
   }
 
-  addEventListener(listener) {
+  subscribe(listener) {
     this.subscribers.push(listener)
   }
 
-  removeEventListener(listener) {
+  unsubscribe(listener) {
     this.subscribers = this.subscribers.filter((sub) => {
       if (sub !== listener) {
         return sub
