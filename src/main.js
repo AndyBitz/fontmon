@@ -13,6 +13,9 @@ const isDev = require('electron-is-dev')
 const prepareNext = require('electron-next')
 const { resolve } = require('app-root-path')
 
+// lib
+const loader = require('./lib/loader')
+
 // globals
 let tray
 
@@ -20,8 +23,8 @@ const createWindow = async () => {
   await prepareNext('./renderer')
 
   const mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600
+    width: 400,
+    height: 300
   })
 
   const devPath = 'http://localhost:8000/start'
@@ -48,7 +51,14 @@ const createTrayicon = async (win) => {
   const contextMenu = Menu.buildFromTemplate([
     {label: 'Quit', click: () => {
       app.isQuitting = true
-      app.quit()
+      loader.unloadAll()
+        .then(() => {
+          app.quit()
+        })
+        .catch((err) => {
+          console.error(err)
+          app.quit()
+        })
     }}
   ])
   tray.setToolTip('fontmon')

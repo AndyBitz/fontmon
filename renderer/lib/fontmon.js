@@ -60,7 +60,7 @@ class Fontmon {
     const length = list.length
 
     for (let i=0; i < length; i++) {
-      const cFileList = await loader.read(list.item(i).path)
+      const cFileList = await loader.readDir(list.item(i).path)
       fileList = fileList.concat(cFileList)
     }
 
@@ -87,31 +87,6 @@ class Fontmon {
   dispatchEvent(args) {
     this.subscribers.map(sub => sub(args))
   }
-
-  /*
-  static async getFonts() {
-    const files = await this.getFontFiles()
-
-    for (let i in files) {
-      files[i] = await this.getFontMeta(files[i])
-    }
-
-    return files
-  }
-
-  static async getFontFiles() {
-    const cfg = await config.readConfig()
-    const dir = cfg.directory
-
-    return await this.recursiveRead(dir)
-  }
-
-  static async getFontMeta(file) {
-    return {
-      path: file
-    }
-  }
-  */
 }
 
 // singleton
