@@ -51,14 +51,7 @@ const createTrayicon = async (win) => {
   const contextMenu = Menu.buildFromTemplate([
     {label: 'Quit', click: () => {
       app.isQuitting = true
-      loader.unloadAll()
-        .then(() => {
-          app.quit()
-        })
-        .catch((err) => {
-          console.error(err)
-          app.quit()
-        })
+      app.quit()
     }}
   ])
   tray.setToolTip('fontmon')
@@ -79,6 +72,7 @@ const createTrayicon = async (win) => {
     }
   })
 
+  // only hide window on close
   win.on('close', (event) => {
     if (app.isQuitting === undefined) {
       event.preventDefault()
@@ -91,4 +85,26 @@ const createTrayicon = async (win) => {
 app.on('ready', async () => {
   const win = await createWindow()
   createTrayicon(win)
+})
+
+// handle before quitting
+app.on('will-quit', (event) => {
+  // unload all fonts before quitting
+  if (app.fontsAreUnloaded === undefined) {
+
+    // prevent quitting
+    event.preventDefault()
+
+    // unload all fonts
+    loader.unloadAll()
+      .then(() => {
+        app.fontsAreUnloaded = true
+        app.quit()
+      })
+      .catch((err) => {
+        throw new Error('Could not unload all fonts.', err)
+        app.fontsAreUnloaded = true
+        app.quit()
+      })
+  }
 })
