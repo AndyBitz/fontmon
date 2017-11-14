@@ -1,3 +1,8 @@
+// The Loader singleton class will handle
+// all the work when fonts are
+// added or removed to the system.
+// It does not emit any events.
+
 const {execFile} = require('child_process')
 const path = require('path')
 const {promisify} = require('util')
@@ -21,6 +26,8 @@ const asyncExec = (cmd, args) => new Promise((res, rej) => {
   execFile(cmd, args, options, callback)
 })
 
+// executs the fontloader.exe for windows with the given arguments
+// arguments are either add or remove and the fontpath
 const execWinFontloader = async (args) => {
   const exe = path.normalize(`${__dirname}/../execs/cli-fontloader.exe`)
   return await asyncExec(exe, args)
@@ -99,11 +106,11 @@ class Loader {
   }
 
   // adds a font to the installed list
+  // with the default meta-data
   addToList(result) {
     this.loadedFonts.push({
       path: result.path,
-      fileName: path.parse(result.path).base,
-      remove: () => this.remove(result.path)
+      fileName: path.parse(result.path).base
     })
   }
 
