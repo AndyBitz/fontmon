@@ -1,7 +1,6 @@
 // Native
 const { format } = require('url')
 
-
 // Packages
 const {
   BrowserWindow,
@@ -18,6 +17,7 @@ const loader = require('./lib/loader')
 
 // globals
 let tray
+
 
 const createWindow = async () => {
   await prepareNext('./renderer')
@@ -54,6 +54,7 @@ const createTrayicon = async (win) => {
       app.quit()
     }}
   ])
+
   tray.setToolTip('fontmon')
   tray.setContextMenu(contextMenu)
 
