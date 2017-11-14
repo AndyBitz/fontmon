@@ -8,49 +8,37 @@ const loader = require('electron').remote.require('./lib/loader')
 class Fontmon {
   constructor() {
     this.subscribers = []
-    this.loadedFonts = []
   }
 
   getLoadedFonts() {
-    return this.loadedFonts
+    return loader.getAll().map((font) => {
+      font.remove = () => this.remove(font.path)
+      return font
+    })
   }
 
   async add(path, dispatch=true) {
-    const status = await loader.add(path)
-    if (status.result === 1) {
-      this.loadedFonts.push({
-        path: status.path,
-        remove: () => this.remove(status.path),
-        fileName: parse(status.path).base
-      })
-    }
+    const result = await loader.add(path)
 
     if (dispatch) {
-      this.dispatchEvent(status)
+      this.dispatchEvent(result)
     } else {
-      return status
+      return result
     }
 
-    return !!status.result
+    return !!result.status
   }
 
   async remove(path, dispatch=true) {
-    const status = await loader.remove(path)
-    if (status.result === 1) {
-      this.loadedFonts = this.loadedFonts.filter((loadedFont) => {
-        if (loadedFont.path !== path) {
-          return true
-        }
-      })
-    }
+    const result = await loader.remove(path)
 
     if (dispatch) {
-      this.dispatchEvent(status)
+      this.dispatchEvent(result)
     } else {
-      return status
+      return result
     }
 
-    return !!status.result
+    return !!result.status
   }
 
   async loadList(list) {

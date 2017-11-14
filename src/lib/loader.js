@@ -6,6 +6,7 @@ const fs = require('fs')
 const readdir = promisify(fs.readdir)
 const stat = promisify(fs.stat)
 
+// execute a file and return it's stdout
 const asyncExec = (cmd, args) => new Promise((res, rej) => {
   const options = { windowsHide: true }
 
@@ -20,10 +21,20 @@ const asyncExec = (cmd, args) => new Promise((res, rej) => {
   execFile(cmd, args, options, callback)
 })
 
+const execWinFontloader = async (args) => {
+  const exe = path.normalize(`${__dirname}/../execs/cli-fontloader.exe`)
+  return await asyncExec(exe, args)
+}
+
 
 class Loader {
   constructor() {
     this.loadedFonts = []
+  }
+
+  // returns all fonts that are installed
+  getAll() {
+    return this.loadedFonts
   }
 
   // loads a font
@@ -32,27 +43,18 @@ class Loader {
 
     switch (process.platform) {
       case 'win32': 
-        const exe = path.normalize(`${__dirname}/../execs/cli-fontloader.exe`)
-        const result = await asyncExec(exe, ['add', fontpath])
+        const result = await execWinFontloader(['add', fontpath])
         const fixPath = result.replace(/\\/g, '\\\\')
         const jsonResult = JSON.parse(fixPath)
 
-        if (jsonResult.result === 1) {
-          this.loadedFonts.push(jsonResult.path)
+        if (jsonResult.status === 1) {
+          this.addToList(jsonResult)
         }
 
         return jsonResult
 
-      case 'darwin':
-        // move font to ~/Library/Fonts
-        // link font
-        // ln -s $PATH ~/Library/Fonts/$FILENAME
-
-      case 'linux':
-        // move font to ~/.fonts
-        // link font (absolute paths!)
-        // ln -s '/home/sam/Downloads/Oxygen-Regular.ttf' /home/sam/.local/share/fonts/
-
+      case 'darwin': // ln -s $PATH ~/Library/Fonts/$FILENAME
+      case 'linux': // ln -s '/home/sam/Downloads/Oxygen-Regular.ttf' /home/sam/.local/share/fonts/
       case 'freebsd':
       case 'sunos':
 
@@ -67,13 +69,12 @@ class Loader {
 
     switch (process.platform) {
       case 'win32': 
-        const exe = path.normalize(`${__dirname}/../execs/cli-fontloader.exe`)
-        const result = await asyncExec(exe, ['remove', fontpath])
+        const result = await execWinFontloader(['remove', fontpath])
         const fixPath = result.replace(/\\/g, '\\\\')
         const jsonResult = JSON.parse(fixPath)
 
-        if (jsonResult.result === 1) {
-          this.loadedFonts = this.filterFont(jsonResult.path)
+        if (jsonResult.status === 1) {
+          this.removeFromList(jsonResult)
         }
 
         return jsonResult
@@ -93,21 +94,23 @@ class Loader {
     const len = this.loadedFonts.length-1
 
     for (let i=0; i < len; i++) {
-      await this.remove(this.loadedFonts[0])
+      await this.remove(this.loadedFonts[0].path)
     }
   }
 
-  // returns all fonts that are installed
-  getAll() {
-    return this.loadedFonts
+  // adds a font to the installed list
+  addToList(result) {
+    this.loadedFonts.push({
+      path: result.path,
+      fileName: path.parse(result.path).base,
+      remove: () => this.remove(result.path)
+    })
   }
 
-  // returns a new array without fontpath
-  filterFont(fontpath) {
-    return this.loadedFonts.filter((font) => {
-      if (font !== fontpath) {
-        return true
-      }
+  // removes a font from the installed list
+  removeFromList(result) {
+    this.loadedFonts = this.loadedFonts.filter((font) => {
+      return result.path !== font.path
     })
   }
 
@@ -129,11 +132,9 @@ class Loader {
       const stats = await stat(abs)
 
       if (stats.isDirectory()) {
-        files = files.concat(await readFontFilesRecursive(abs))
+        files = files.concat(await this.readDir(abs))
       } else {
-        if (Loader.isFont(abs)) {
-          files.push(abs)
-        }
+        Loader.isFont(abs) && files.push(abs)
       }
     }
 

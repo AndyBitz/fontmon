@@ -52,8 +52,6 @@ export default class extends Component {
   }
 
   onFontmonChange(status) {
-    console.log('status', status)
-
     this.setState({
       loadedFonts: this.fontmon.getLoadedFonts()
     })

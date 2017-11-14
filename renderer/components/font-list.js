@@ -5,7 +5,6 @@ export default ({fonts}) => (
 const FontItem = (font, index) => {
   const handleRemove = () => {
     font.remove()
-    console.log('removed font', font.fileName)
   }
 
   return (

@@ -32,8 +32,9 @@ int main() {
     ret = RemoveFontResourceW(path);
   }
 
+
   // output json
-  printf("{\"result\":%d,\"type\":\"%ws\",\"path\":\"%ws\"}\n", ret, cmd, path);
+  printf("{\"status\":%d,\"type\":\"%ws\",\"path\":\"%ws\"}\n", ret, cmd, path);
 
   LocalFree(argv);
   return 0;
