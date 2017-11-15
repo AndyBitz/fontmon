@@ -6,6 +6,7 @@ import Layout from '../components/layout'
 import FontList from '../components/font-list'
 import DropOverlay from '../components/drop-overlay'
 import EmptyScreen from '../components/empty-screen'
+import LoadingOverlay from '../components/loading-overlay'
 
 
 export default class extends Component {
@@ -23,6 +24,7 @@ export default class extends Component {
     this.state = {
       isServer: true,
       isDragging: false,
+      isLoading: false,
       loadedFonts: []
     }
   }
@@ -80,10 +82,13 @@ export default class extends Component {
 
   onDrop(event) {
     event.preventDefault()
-    this.setState({ isDragging: false })
+    this.setState({ isDragging: false, isLoading: true })
 
     // load font when it's dropped on the window
     this.fontmon.loadList(event.dataTransfer.files)
+      .then(() => {
+        this.setState({ isLoading: false })
+      })
   }
 
   render() {
@@ -97,6 +102,7 @@ export default class extends Component {
 
     return (
       <Layout>
+        <LoadingOverlay isLoading={this.state.isLoading} />
         <DropOverlay isDragging={this.state.isDragging} />
         { loadedFonts[0]
             ? <FontList fonts={loadedFonts} />

@@ -1,31 +1,58 @@
+// components
+import {Component} from 'react'
+
+
 export default ({fonts}) => (
-  fonts.map(FontItem)
+  fonts.map((font, index) => (
+    <FontItem
+      font={font}
+      index={index}
+      key={`${font.fileName}-${index}`}
+    />
+  ))
 )
 
-const FontItem = (font, index) => {
-  const handleRemove = () => {
-    font.remove()
+class FontItem extends Component {
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      isRemoving: false
+    }
+
+    this.handleRemove = this.handleRemove.bind(this)
   }
 
-  return (
-    <div key={`${font.fileName}-${index}`}>
-      <span>{font.fileName}</span>
-      <button onClick={handleRemove}>Remove</button>
-      <style jsx>
-      {`
-        div {
-          display: flex;
-        }
+  handleRemove(event) {
+    this.setState({ isRemoving: true })
+    this.props.font.remove()
+  }
 
-        span {
-          display: block;
-        }
+  render() {
+    const {font, index} = this.props
+    const {isRemoving} = this.state
 
-        button {
-          display: block;
-        }
-      `}
-      </style>
-    </div>
-  )
+    return (
+      <div>
+        <span>{ isRemoving ? 'removing...' : '' }</span>
+        <span>{font.fileName}</span>
+        <button onClick={this.handleRemove}>Remove</button>
+        <style jsx>
+        {`
+          div {
+            display: flex;
+          }
+
+          span {
+            display: block;
+          }
+
+          button {
+            display: block;
+          }
+        `}
+        </style>
+      </div>
+    )
+  }
 }
