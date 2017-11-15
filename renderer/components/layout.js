@@ -11,7 +11,9 @@ export default ({children}) => (
         margin: 0;
         padding: 0;
         background-color: #fff;
-        font-family: monospace;
+        font-family: Roboto, sans-serif;
+        user-select: none;
+        cursor: default;
       }
     `}
     </style>

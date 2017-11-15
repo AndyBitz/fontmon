@@ -16,16 +16,20 @@ const { resolve } = require('app-root-path')
 const loader = require('./lib/loader')
 
 // globals
+let mainWindow
 let tray
 
 
 const createWindow = async () => {
   await prepareNext('./renderer')
 
-  const mainWindow = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     width: 400,
     height: 300
   })
+
+  mainWindow.setMenu(null)
+  mainWindow.webContents.openDevTools()
 
   const devPath = 'http://localhost:8000/start'
 
@@ -90,22 +94,20 @@ app.on('ready', async () => {
 
 // handle before quitting
 app.on('will-quit', (event) => {
-  // unload all fonts before quitting
-  if (app.fontsAreUnloaded === undefined) {
 
-    // prevent quitting
+  if (app.isUnloaded === undefined) {
     event.preventDefault()
 
-    // unload all fonts
+    // unload all fonts before quitting
     loader.unloadAll()
-      .then(() => {
-        app.fontsAreUnloaded = true
+      .then((status) => {
+        app.isUnloaded = true
         app.quit()
       })
       .catch((err) => {
-        throw new Error('Could not unload all fonts.', err)
-        app.fontsAreUnloaded = true
+        app.isUnloaded = true
         app.quit()
+        throw new Error('Could not unload all fonts.', err)
       })
   }
 })

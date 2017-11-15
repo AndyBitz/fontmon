@@ -4,6 +4,8 @@ import {Component} from 'react'
 // components
 import Layout from '../components/layout'
 import FontList from '../components/font-list'
+import DropOverlay from '../components/drop-overlay'
+import EmptyScreen from '../components/empty-screen'
 
 
 export default class extends Component {
@@ -20,7 +22,7 @@ export default class extends Component {
     // default state
     this.state = {
       isServer: true,
-      dragging: false,
+      isDragging: false,
       loadedFonts: []
     }
   }
@@ -68,17 +70,17 @@ export default class extends Component {
 
   onDragLeave(event) {
     event.preventDefault()
-    this.setState({ dragging: false })
+    this.setState({ isDragging: false })
   }
 
   onDragOver(event) {
     event.preventDefault()
-    this.setState({ dragging: true })
+    this.setState({ isDragging: true })
   }
 
   onDrop(event) {
     event.preventDefault()
-    this.setState({ dragging: false })
+    this.setState({ isDragging: false })
 
     // load font when it's dropped on the window
     this.fontmon.loadList(event.dataTransfer.files)
@@ -95,7 +97,11 @@ export default class extends Component {
 
     return (
       <Layout>
-        { loadedFonts[0] ? <FontList fonts={loadedFonts} /> : 'Drag to load font' }
+        <DropOverlay isDragging={this.state.isDragging} />
+        { loadedFonts[0]
+            ? <FontList fonts={loadedFonts} />
+            : <EmptyScreen />
+        }
       </Layout>
     )
   }

@@ -98,11 +98,14 @@ class Loader {
 
   // unloads all fonts that are installed
   async unloadAll() {
-    const len = this.loadedFonts.length-1
+    const status = []
+    const loadedFontsCopy = this.loadedFonts
 
-    for (let i=0; i < len; i++) {
-      await this.remove(this.loadedFonts[0].path)
+    for (let i in loadedFontsCopy) {
+      status.push(await this.remove(loadedFontsCopy[i].path))
     }
+
+    return status
   }
 
   // adds a font to the installed list
