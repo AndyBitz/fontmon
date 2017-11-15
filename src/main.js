@@ -102,12 +102,12 @@ app.on('will-quit', (event) => {
     loader.unloadAll()
       .then((status) => {
         app.isUnloaded = true
-        app.quit()
+        setTimeout(app.quit, 100) 
       })
       .catch((err) => {
         app.isUnloaded = true
-        app.quit()
         throw new Error('Could not unload all fonts.', err)
+        setTimeout(app.quit, 100)        
       })
   }
 })

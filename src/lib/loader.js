@@ -30,7 +30,9 @@ const asyncExec = (cmd, args) => new Promise((res, rej) => {
 // arguments are either add or remove and the fontpath
 const execWinFontloader = async (args) => {
   const exe = path.normalize(`${__dirname}/../execs/cli-fontloader.exe`)
-  return await asyncExec(exe, args)
+  const result = await asyncExec(exe, args)
+  const fixPath = result.replace(/\\/g, '\\\\')
+  return JSON.parse(fixPath)
 }
 
 
@@ -44,21 +46,30 @@ class Loader {
     return this.loadedFonts
   }
 
+  // check if path is already loaded
+  isAlreadyLoaded(fontpath) {
+    return this.loadedFonts.some((font) => (
+      font.path === fontpath
+    ))
+  }
+
   // loads a font
   async add(fontpath) {
     fontpath = path.normalize(fontpath)
 
+    if (this.isAlreadyLoaded(fontpath)) {
+      return Error(`Font ${fontpath} is already installed.`)
+    }
+
     switch (process.platform) {
       case 'win32': 
         const result = await execWinFontloader(['add', fontpath])
-        const fixPath = result.replace(/\\/g, '\\\\')
-        const jsonResult = JSON.parse(fixPath)
 
-        if (jsonResult.status === 1) {
-          this.addToList(jsonResult)
+        if (result.status === 1) {
+          this.addToList(result)
         }
 
-        return jsonResult
+        return result
 
       case 'darwin': // ln -s $PATH ~/Library/Fonts/$FILENAME
       case 'linux': // ln -s '/home/sam/Downloads/Oxygen-Regular.ttf' /home/sam/.local/share/fonts/
@@ -74,17 +85,19 @@ class Loader {
   async remove(fontpath) {
     fontpath = path.normalize(fontpath)
 
+    if (this.isAlreadyLoaded(fontpath) === false) {
+      return Error(`Font is not loaded ${fontpath}.`)
+    }
+
     switch (process.platform) {
       case 'win32': 
         const result = await execWinFontloader(['remove', fontpath])
-        const fixPath = result.replace(/\\/g, '\\\\')
-        const jsonResult = JSON.parse(fixPath)
 
-        if (jsonResult.status === 1) {
-          this.removeFromList(jsonResult)
+        if (result.status === 1) {
+          this.removeFromList(result)
         }
 
-        return jsonResult
+        return result
 
       case 'darwin':
       case 'linux':
@@ -100,6 +113,10 @@ class Loader {
   async unloadAll() {
     const status = []
     const loadedFontsCopy = this.loadedFonts
+
+    if (loadedFontsCopy[0] === undefined) {
+      return status
+    }
 
     for (let i in loadedFontsCopy) {
       status.push(await this.remove(loadedFontsCopy[i].path))
