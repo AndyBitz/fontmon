@@ -19,9 +19,13 @@ const loader = require('./lib/loader')
 let mainWindow
 let tray
 
-const iconPath = (process.platform === 'win32')
-    ? resolve(`/assets/tray-icon.ico`)
-    : resolve(`/assets/tray-icon.png`)
+const trayIconPath = (process.platform === 'win32')
+  ? resolve(`/assets/tray-icon-16.ico`)
+  : resolve(`/assets/tray-icon-16.png`)
+
+const windowIconPath = (process.platform === 'win32')
+  ? resolve(`/assets/window-icon-48.ico`)
+  : resolve(`/assets/window-icon-48.png`)
 
 const createWindow = async () => {
   await prepareNext('./renderer')
@@ -32,7 +36,7 @@ const createWindow = async () => {
     height: 300,
     minWidth: 400,
     minHeight: 300,
-    icon: iconPath
+    icon: windowIconPath
   })
 
   mainWindow.setMenu(null)
@@ -53,7 +57,7 @@ const createWindow = async () => {
 }
 
 const createTrayicon = async (win) => {
-  const trayIcon = iconPath
+  const trayIcon = trayIconPath
 
   tray = new Tray(trayIcon)
 
