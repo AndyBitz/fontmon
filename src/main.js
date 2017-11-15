@@ -19,17 +19,24 @@ const loader = require('./lib/loader')
 let mainWindow
 let tray
 
+const iconPath = (process.platform === 'win32')
+    ? resolve(`/assets/tray-icon.ico`)
+    : resolve(`/assets/tray-icon.png`)
 
 const createWindow = async () => {
   await prepareNext('./renderer')
 
   mainWindow = new BrowserWindow({
+    title: 'fontmon',
     width: 400,
-    height: 300
+    height: 300,
+    minWidth: 400,
+    minHeight: 300,
+    icon: iconPath
   })
 
   mainWindow.setMenu(null)
-  mainWindow.webContents.openDevTools()
+  // mainWindow.webContents.openDevTools()
 
   const devPath = 'http://localhost:8000/start'
 
@@ -46,9 +53,7 @@ const createWindow = async () => {
 }
 
 const createTrayicon = async (win) => {
-  const trayIcon = (process.platform === 'win32')
-    ? resolve(`/assets/tray-icon.ico`)
-    : resolve(`/assets/tray-icon.png`)
+  const trayIcon = iconPath
 
   tray = new Tray(trayIcon)
 
