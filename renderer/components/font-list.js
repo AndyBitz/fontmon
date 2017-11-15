@@ -1,6 +1,9 @@
 // components
 import {Component} from 'react'
 
+// icons
+import CloseIcon from '../vectors/close.svg'
+
 
 export default ({fonts}) => (
   fonts.map((font, index) => (
@@ -34,13 +37,23 @@ class FontItem extends Component {
 
     return (
       <div>
-        <span>{ isRemoving ? 'removing...' : '' }</span>
         <span>{font.fileName}</span>
-        <button onClick={this.handleRemove}>Remove</button>
+        <button onClick={this.handleRemove}><CloseIcon /></button>
         <style jsx>
         {`
           div {
             display: flex;
+            align-items: center;
+            width: 100%;
+            max-width: 400px;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(0,0,0,.4);
+            padding: .6em 1em;
+            color: rgba(0,0,0,.73);
+          }
+
+          div:last-child {
+            border-bottom: 0;
           }
 
           span {
@@ -48,7 +61,17 @@ class FontItem extends Component {
           }
 
           button {
+            border: none;
+            background: none;
+            padding: 0;
+            outline: none;
+            cursor: pointer;
+          }
+
+          button :global(svg) {
             display: block;
+            width: 1.2rem;
+            height: 1.2rem;
           }
         `}
         </style>
