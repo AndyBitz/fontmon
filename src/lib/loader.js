@@ -91,7 +91,7 @@ class Loader {
           const linkPath = path.normalize(`~/.local/share/fonts/${fileName}`)
           await symlink(fontpath, linkPath)
         } catch(err) {
-          return {status: 0; path: linkPath, type: 'add'}
+          return {status: 0, path: linkPath, type: 'add'}
         }
 
         return {status: 1, path: linkPath, type: 'add'}
