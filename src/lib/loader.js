@@ -75,26 +75,26 @@ class Loader {
         return result
 
       case 'darwin': // ln -s $PATH ~/Library/Fonts/$FILENAME
-        const fileName = path.parse(fontpath).base
-        const linkPath = path.normalize(`~/Library/Fonts/${fileName}`)
+        const dar_fileName = path.parse(fontpath).base
+        const dar_linkPath = path.normalize(`~/Library/Fonts/${dar_fileName}`)
         try {
-          await symlink(fontpath, linkPath)
+          await symlink(fontpath, dar_linkPath)
         } catch(err) {
-          return {status: 0, path: linkPath, type: 'add'}
+          return {status: 0, path: dar_linkPath, type: 'add'}
         }
 
-        return {status: 1, path: linkPath, type: 'add'}
+        return {status: 1, path: dar_linkPath, type: 'add'}
 
       case 'linux': // ln -s '/home/sam/Downloads/Oxygen-Regular.ttf' /home/sam/.local/share/fonts/
-        const fileName = path.parse(fontpath).base
-        const linkPath = path.normalize(`~/.local/share/fonts/${fileName}`)
+        const lin_fileName = path.parse(fontpath).base
+        const lin_linkPath = path.normalize(`~/.local/share/fonts/${lin_fileName}`)
         try {
-          await symlink(fontpath, linkPath)
+          await symlink(fontpath, lin_linkPath)
         } catch(err) {
-          return {status: 0, path: linkPath, type: 'add'}
+          return {status: 0, path: lin_linkPath, type: 'add'}
         }
 
-        return {status: 1, path: linkPath, type: 'add'}
+        return {status: 1, path: lin_linkPath, type: 'add'}
 
       case 'freebsd':
       case 'sunos':
