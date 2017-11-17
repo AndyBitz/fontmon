@@ -71,7 +71,6 @@ const createTrayicon = async (win) => {
   tray.setToolTip('fontmon')
   tray.setContextMenu(contextMenu)
 
-  // TODO: make extra menu item for this on linux
   tray.on('click', () => {
     if (win.isVisible() === false) {
       win.show()
@@ -90,7 +89,11 @@ const createTrayicon = async (win) => {
   win.on('close', (event) => {
     if (app.isQuitting === undefined) {
       event.preventDefault()
-      win.hide()
+      if (process.platform !== 'linux') {
+        win.hide()
+      } else {
+        win.minimize()
+      }
     }
   })
 }
