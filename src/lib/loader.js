@@ -75,9 +75,9 @@ class Loader {
         return result
 
       case 'darwin': // ln -s $PATH ~/Library/Fonts/$FILENAME
+        const fileName = path.parse(fontpath).base
+        const linkPath = path.normalize(`~/Library/Fonts/${fileName}`)
         try {
-          const fileName = path.parse(fontpath).base
-          const linkPath = path.normalize(`~/Library/Fonts/${fileName}`)
           await symlink(fontpath, linkPath)
         } catch(err) {
           return {status: 0, path: linkPath, type: 'add'}
@@ -86,9 +86,9 @@ class Loader {
         return {status: 1, path: linkPath, type: 'add'}
 
       case 'linux': // ln -s '/home/sam/Downloads/Oxygen-Regular.ttf' /home/sam/.local/share/fonts/
+        const fileName = path.parse(fontpath).base
+        const linkPath = path.normalize(`~/.local/share/fonts/${fileName}`)
         try {
-          const fileName = path.parse(fontpath).base
-          const linkPath = path.normalize(`~/.local/share/fonts/${fileName}`)
           await symlink(fontpath, linkPath)
         } catch(err) {
           return {status: 0, path: linkPath, type: 'add'}
