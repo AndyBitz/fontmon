@@ -10,6 +10,9 @@ const fs = require('fs')
 
 const readdir = promisify(fs.readdir)
 const stat = promisify(fs.stat)
+const symlink = promisify(fs.symlink)
+const unlink = promisify(fs.unlink)
+
 
 // execute a file and return it's stdout
 const asyncExec = (cmd, args) => new Promise((res, rej) => {
@@ -72,7 +75,27 @@ class Loader {
         return result
 
       case 'darwin': // ln -s $PATH ~/Library/Fonts/$FILENAME
+        try {
+          const fileName = path.parse(fontpath).base
+          const linkPath = path.normalize(`~/Library/Fonts/${fileName}`)
+          await symlink(fontpath, linkPath)
+        } catch(err) {
+          return {status: 0; path: linkPath, type: 'add'}
+        }
+
+        return {status: 1, path: linkPath, type: 'add'}
+
       case 'linux': // ln -s '/home/sam/Downloads/Oxygen-Regular.ttf' /home/sam/.local/share/fonts/
+        try {
+          const fileName = path.parse(fontpath).base
+          const linkPath = path.normalize(`~/.local/share/fonts/${fileName}`)
+          await symlink(fontpath, linkPath)
+        } catch(err) {
+          return {status: 0; path: linkPath, type: 'add'}
+        }
+
+        return {status: 1, path: linkPath, type: 'add'}
+
       case 'freebsd':
       case 'sunos':
 
@@ -101,6 +124,14 @@ class Loader {
 
       case 'darwin':
       case 'linux':
+        try {
+          await unlink(fontpath)
+        } catch(err) {
+          return {status: 0, path: fontpath, type: 'remove'}
+        }
+
+        return {status: 1, path: fontpath, type: 'remove'}
+
       case 'freebsd':
       case 'sunos':
 
