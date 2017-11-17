@@ -87,13 +87,9 @@ const createTrayicon = async (win) => {
 
   // only hide window on close
   win.on('close', (event) => {
-    if (app.isQuitting === undefined) {
+    if (app.isQuitting === undefined && process.platform !== 'linux') {
       event.preventDefault()
-      if (process.platform !== 'linux') {
-        win.hide()
-      } else {
-        win.minimize()
-      }
+      win.hide()
     }
   })
 }
