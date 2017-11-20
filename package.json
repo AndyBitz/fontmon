@@ -10,11 +10,28 @@
     "dist": "npm run build && build --dir"
   },
   "build": {
+    "appId": "fontmon",
     "files": [
       "**/*",
       "!renderer",
       "renderer/out"
-    ]
+    ],
+    "win": {
+      "target": [
+        "squirrel"
+      ],
+      "icon": "assets/window-icon-256.ico"
+    },
+    "squirrelWindows": {
+      "loadingGif": "assets/install-spinner.gif"
+    },
+    "mac": {
+      "category": "public.app-category.developer-tools",
+      "icon": "main/static/icons/mac.icns",
+      "extendInfo": {
+        "LSUIElement": 1
+      }
+    }
   },
   "keywords": [],
   "author": "Andy Bitz",

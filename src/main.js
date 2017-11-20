@@ -23,7 +23,7 @@ let tray
 const server = `https://updater.fontmon.now.sh`
 const feed = `${server}/update/${process.platform}/${app.getVersion()}`
 
-autoUpdater(feed)
+autoUpdater.setFeedURL(feed)
 
 const trayIconPath = (process.platform === 'win32')
   ? resolve(`/assets/tray-icon-16.ico`)
