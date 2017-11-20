@@ -6,7 +6,8 @@ const {
   BrowserWindow,
   app,
   Tray,
-  Menu
+  Menu,
+  autoUpdater
 } = require('electron')
 const isDev = require('electron-is-dev')
 const prepareNext = require('electron-next')
@@ -18,6 +19,11 @@ const loader = require('./lib/loader')
 // globals
 let mainWindow
 let tray
+
+const server = `https://updater.fontmon.now.sh`
+const feed = `${server}/update/${process.platform}/${app.getVersion()}`
+
+autoUpdater(feed)
 
 const trayIconPath = (process.platform === 'win32')
   ? resolve(`/assets/tray-icon-16.ico`)
