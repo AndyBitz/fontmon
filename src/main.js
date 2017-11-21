@@ -13,6 +13,11 @@ const isDev = require('electron-is-dev')
 const prepareNext = require('electron-next')
 const { resolve } = require('app-root-path')
 
+// installer
+if(require('electron-squirrel-startup')) {
+  app.quit()
+}
+
 // lib
 const loader = require('./lib/loader')
 
