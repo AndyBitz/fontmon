@@ -2,12 +2,14 @@
   "name": "fontmon",
   "version": "1.0.0",
   "description": "A fontmanger made with electron",
-  "main": "src/main.js",
+  "main": "./src/main.js",
   "scripts": {
     "start": "electron .",
+    "postinstall": "electron-builder install-app-deps",
     "rebuild": "./node_modules/.bin/electron-rebuild.cmd",
-    "build": "npm run rebuild && next build renderer && next export renderer",
-    "dist": "npm run build && build --dir"
+    "build": "next build renderer && next export renderer",
+    "pack": "npm run build && build --dir",
+    "dist": "npm run build && build"
   },
   "build": {
     "appId": "fontmon",
@@ -27,7 +29,7 @@
     },
     "mac": {
       "category": "public.app-category.developer-tools",
-      "icon": "main/static/icons/mac.icns",
+      "icon": "assets/icons/window-icon-256.icns",
       "extendInfo": {
         "LSUIElement": 1
       }
@@ -46,7 +48,6 @@
   },
   "dependencies": {
     "app-root-path": "^2.0.1",
-    "electron-builder-squirrel-windows": "^19.46.0",
     "electron-is-dev": "^0.3.0",
     "electron-next": "^3.1.3"
   },
@@ -54,6 +55,7 @@
     "babel-plugin-inline-react-svg": "^0.4.0",
     "electron": "^1.8.2-beta.2",
     "electron-builder": "^19.45.5",
+    "electron-builder-squirrel-windows": "^19.46.0",
     "electron-rebuild": "^1.6.0",
     "next": "^4.1.4",
     "react": "^16.0.0",

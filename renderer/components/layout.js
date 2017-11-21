@@ -1,5 +1,11 @@
+import Head from 'next/head'
+
+
 export default ({children}) => (
   <main>
+    <Head>
+      <title>fontmon</title> 
+    </Head>
     {children}
     <style jsx global>
     {`

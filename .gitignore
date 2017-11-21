@@ -3,3 +3,5 @@ node_modules
 
 # builds
 .next
+dist/*
+renderer/out
