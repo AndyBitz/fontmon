@@ -20,6 +20,23 @@ const loader = require('./lib/loader')
 let mainWindow
 let tray
 
+// only one process
+const isSecondInstance = app.makeSingleInstance((commandLine, workingDirectory) => {
+  // Someone tried to run a second instance, we should focus our window.
+  if (mainWindow) {
+    if (mainWindow.isMinimized()) {
+      mainWindow.restore()
+    } else {
+      mainWindow.focus()
+    }
+  }
+})
+
+if (isSecondInstance) {
+  app.quit()
+}
+
+// updates
 const server = `https://updater.fontmon.now.sh`
 const feed = `${server}/update/${process.platform}/${app.getVersion()}`
 
