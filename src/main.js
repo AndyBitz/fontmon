@@ -43,12 +43,12 @@ const feed = `${server}/update/${process.platform}/${app.getVersion()}`
 autoUpdater.setFeedURL(feed)
 
 const trayIconPath = (process.platform === 'win32')
-  ? resolve(`/assets/tray-icon-16.ico`)
-  : resolve(`/assets/tray-icon-16.png`)
+  ? resolve(`/assets/tray/windows.ico`)
+  : resolve(`/assets/tray/tray.png`)
 
 const windowIconPath = (process.platform === 'win32')
-  ? resolve(`/assets/window-icon-48.ico`)
-  : resolve(`/assets/window-icon-48.png`)
+  ? resolve(`/assets/icons/windows.ico`)
+  : resolve(`/assets/icons/window.png`)
 
 const createWindow = async () => {
   await prepareNext('./renderer')
