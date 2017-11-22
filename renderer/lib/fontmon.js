@@ -33,8 +33,8 @@ class Fontmon extends EventEmitter {
     const length = fileList.length
 
     for (let i=0; i < length; i++) {
-      const item = fileList.item(i).path
-      const list = await loader.readDir(item)
+      const path = fileList.item(i).path
+      const list = await loader.scanForFonts(path)
       list.map((file) => loader.add(file))
     }
   }

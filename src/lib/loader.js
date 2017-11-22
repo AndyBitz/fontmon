@@ -179,7 +179,7 @@ class Loader extends EventEmitter {
 
   // reads one ore more directories recursively
   // and returns an array with all font files found
-  async readDir(dir) {
+  async scanForFonts(dir) {
     const cstat = await stat(dir)
     let files = []
 
@@ -195,7 +195,7 @@ class Loader extends EventEmitter {
       const stats = await stat(abs)
 
       if (stats.isDirectory()) {
-        files = files.concat(await this.readDir(abs))
+        files = files.concat(await this.scanForFonts(abs))
       } else {
         Loader.isFont(abs) && files.push(abs)
       }
@@ -206,7 +206,7 @@ class Loader extends EventEmitter {
 
   // determines what file is a font file and what not
   static isFont(file) {
-    return !!file.match(/\.(otf|otc|ttf|ttc|fon)$/)
+    return !!file.match(/\.(ttf|ttc|otf|otc|pfb|pfm|tfil|ffil|lwfn|dfont|tfil|pfa|afm)$/)
   }
 }
 
