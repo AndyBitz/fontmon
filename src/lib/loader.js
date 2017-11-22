@@ -45,11 +45,7 @@ class Loader extends EventEmitter {
 
     // const dar_fileName = path.parse(fontpath).base
     // const dar_linkPath = path.normalize(`~/Library/Fonts/${dar_fileName}`)
-    // try {
-    //   await symlink(fontpath, dar_linkPath)
-    // } catch(err) {
-    //   return {status: 0, path: dar_linkPath, type: 'add'}
-    // }
+    // await symlink(fontpath, dar_linkPath)
 
     // return {status: 1, path: dar_linkPath, type: 'add'}
   }
@@ -59,49 +55,27 @@ class Loader extends EventEmitter {
 
     // const lin_fileName = path.parse(fontpath).base
     // const lin_linkPath = path.normalize(`~/.local/share/fonts/${lin_fileName}`)
-    // try {
-    //   await symlink(fontpath, lin_linkPath)
-    // } catch(err) {
-    //   return {status: 0, path: lin_linkPath, type: 'add'}
-    // }
+    // await symlink(fontpath, lin_linkPath)
 
     // return {status: 1, path: lin_linkPath, type: 'add'}
   }
 
   async removeOnUnix(fontpath) {
-    // try {
-    //   await unlink(fontpath)
-    // } catch(err) {
-    //   return {status: 0, path: fontpath, type: 'remove'}
-    // }
-
+    // await unlink(fontpath)
     // return {status: 1, path: fontpath, type: 'remove'}
   }
 
+
+
   // loads a font
   async add(fontpath) {
-    let result = {}
     fontpath = path.normalize(fontpath)
 
     if (this.isAlreadyLoaded(fontpath)) {
       throw new Error(`Font at "${fontpath}" is already installed.`)
     }
 
-    switch (process.platform) {
-      case 'win32': 
-        result = await this.installOnWindows(fontpath)
-        break
-      case 'darwin': 
-        // result = await this.installOnDarwin(fontpath)
-        // break
-      case 'linux': 
-        // result = await this.installOnLinux(fontpath)
-        // break
-      case 'freebsd':
-      case 'sunos':
-      default:
-        throw new Error(`${process.platform} is not supported.`)
-    }
+    const result = await this.addOnPlatform(fontpath)
 
     if (result.status === 1) {
       this.addToList(result)
@@ -113,26 +87,13 @@ class Loader extends EventEmitter {
 
   // unloads a font
   async remove(fontpath) {
-    let result = {}
     fontpath = path.normalize(fontpath)
 
     if (this.isAlreadyLoaded(fontpath) === false) {
       throw new Error(`Font at "${fontpath}" is not loaded.`)
     }
 
-    switch (process.platform) {
-      case 'win32': 
-        result = await this.removeOnWindows(fontpath)
-        break
-      case 'darwin':
-      case 'linux':
-        // result = await this.removeOnUnix(fontpath)
-        // break
-      case 'freebsd':
-      case 'sunos':
-      default:
-        throw new Error(`${process.platform} is not supported.`)
-    }
+    const result = await this.removeOnPlatform(fontpath)
 
     if (result.status === 1) {
       this.removeFromList(result)
@@ -140,6 +101,35 @@ class Loader extends EventEmitter {
 
     this.emit('change', result)
     return result
+  }
+
+  async addOnPlatform(fontpath) {
+    switch (process.platform) {
+      case 'win32': 
+        return await this.installOnWindows(fontpath)
+      case 'darwin': 
+        // return await this.installOnDarwin(fontpath)
+      case 'linux': 
+        // return await this.installOnLinux(fontpath)
+      case 'freebsd':
+      case 'sunos':
+      default:
+        throw new Error(`${process.platform} is not supported.`)
+    }
+  }
+
+  async removeOnPlatform(fontpath) {
+    switch (process.platform) {
+      case 'win32': 
+        return await this.removeOnWindows(fontpath)
+      case 'darwin':
+      case 'linux':
+        // return await this.removeOnUnix(fontpath)
+      case 'freebsd':
+      case 'sunos':
+      default:
+        throw new Error(`${process.platform} is not supported.`)
+    }
   }
 
   // unloads all fonts that are installed
