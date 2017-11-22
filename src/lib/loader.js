@@ -1,6 +1,7 @@
 // The Loader singleton class will handle
 // all the work when fonts are
 // added or removed to the system.
+// It will emit the 'change' event when add or remove is called.
 
 const path = require('path')
 const {promisify} = require('util')
@@ -64,8 +65,6 @@ class Loader extends EventEmitter {
     // await unlink(fontpath)
     // return {status: 1, path: fontpath, type: 'remove'}
   }
-
-
 
   // loads a font
   async add(fontpath) {
