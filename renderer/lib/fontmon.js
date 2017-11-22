@@ -17,8 +17,8 @@ class Fontmon extends EventEmitter {
     super()
 
     // pass events from loader up to fontmon
-    loader.on('change', (status) => {
-      this.emit('change', status)
+    loader.on('change', (result) => {
+      this.emit('change', result)
     })
   }
 

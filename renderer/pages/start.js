@@ -69,7 +69,7 @@ export default class extends Component {
   }
 
   handleStatus(status) {
-    console.log(status)
+    console.dir(status)
   }
 
   onDragEnter(event) {

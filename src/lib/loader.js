@@ -71,7 +71,7 @@ class Loader extends EventEmitter {
     fontpath = path.normalize(fontpath)
 
     if (this.isAlreadyLoaded(fontpath)) {
-      throw new Error(`Font at "${fontpath}" is already installed.`)
+      return new Error(`Font at "${fontpath}" is already installed.`)
     }
 
     const result = await this.addOnPlatform(fontpath)
@@ -89,7 +89,7 @@ class Loader extends EventEmitter {
     fontpath = path.normalize(fontpath)
 
     if (this.isAlreadyLoaded(fontpath) === false) {
-      throw new Error(`Font at "${fontpath}" is not loaded.`)
+      return new Error(`Font at "${fontpath}" is not loaded.`)
     }
 
     const result = await this.removeOnPlatform(fontpath)
@@ -113,7 +113,7 @@ class Loader extends EventEmitter {
       case 'freebsd':
       case 'sunos':
       default:
-        throw new Error(`${process.platform} is not supported.`)
+        return new Error(`${process.platform} is not supported.`)
     }
   }
 
@@ -127,7 +127,7 @@ class Loader extends EventEmitter {
       case 'freebsd':
       case 'sunos':
       default:
-        throw new Error(`${process.platform} is not supported.`)
+        return new Error(`${process.platform} is not supported.`)
     }
   }
 
