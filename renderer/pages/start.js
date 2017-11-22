@@ -14,7 +14,7 @@ export default class extends Component {
     super(props)
 
     // bindings
-    this.handleStatus = this.handleStatus.bind(this)
+    this.handleResult = this.handleResult.bind(this)
     this.onFontmonChange = this.onFontmonChange.bind(this)
     this.onDragEnter = this.onDragEnter.bind(this)
     this.onDragLeave = this.onDragLeave.bind(this)
@@ -61,15 +61,15 @@ export default class extends Component {
 
   // call whenever a font gets added or removed
   // to update the state
-  onFontmonChange(status) {
-    this.handleStatus(status)
+  onFontmonChange(result) {
+    this.handleResult(result)
     this.setState({
       loadedFonts: this.fontmon.getLoadedFonts()
     })
   }
 
-  handleStatus(status) {
-    console.dir(status)
+  handleResult(result) {
+    console.dir(result)
   }
 
   onDragEnter(event) {

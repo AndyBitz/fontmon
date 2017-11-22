@@ -46,6 +46,7 @@ class Loader extends EventEmitter {
 
     // const dar_fileName = path.parse(fontpath).base
     // const dar_linkPath = path.normalize(`~/Library/Fonts/${dar_fileName}`)
+    // needs try-catch
     // await symlink(fontpath, dar_linkPath)
 
     // return {status: 1, path: dar_linkPath, type: 'add'}
@@ -56,6 +57,7 @@ class Loader extends EventEmitter {
 
     // const lin_fileName = path.parse(fontpath).base
     // const lin_linkPath = path.normalize(`~/.local/share/fonts/${lin_fileName}`)
+    // needs try-catch
     // await symlink(fontpath, lin_linkPath)
 
     // return {status: 1, path: lin_linkPath, type: 'add'}
