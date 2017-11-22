@@ -32,90 +32,114 @@ class Loader extends EventEmitter {
     ))
   }
 
+  async installOnWindows(fontpath) {
+    return await execWinFontLoader(['add', fontpath])
+  }
+
+  async removeOnWindows(fontpath) {
+    return await execWinFontLoader(['remove', fontpath])
+  }
+
+  async installOnDarwin(fontpath) {
+    // ln -s $PATH ~/Library/Fonts/$FILENAME
+
+    // const dar_fileName = path.parse(fontpath).base
+    // const dar_linkPath = path.normalize(`~/Library/Fonts/${dar_fileName}`)
+    // try {
+    //   await symlink(fontpath, dar_linkPath)
+    // } catch(err) {
+    //   return {status: 0, path: dar_linkPath, type: 'add'}
+    // }
+
+    // return {status: 1, path: dar_linkPath, type: 'add'}
+  }
+
+  async installOnLinux(fontpath) {
+    // ln -s '/home/sam/Downloads/Oxygen-Regular.ttf' /home/sam/.local/share/fonts/
+
+    // const lin_fileName = path.parse(fontpath).base
+    // const lin_linkPath = path.normalize(`~/.local/share/fonts/${lin_fileName}`)
+    // try {
+    //   await symlink(fontpath, lin_linkPath)
+    // } catch(err) {
+    //   return {status: 0, path: lin_linkPath, type: 'add'}
+    // }
+
+    // return {status: 1, path: lin_linkPath, type: 'add'}
+  }
+
+  async removeOnUnix(fontpath) {
+    // try {
+    //   await unlink(fontpath)
+    // } catch(err) {
+    //   return {status: 0, path: fontpath, type: 'remove'}
+    // }
+
+    // return {status: 1, path: fontpath, type: 'remove'}
+  }
+
   // loads a font
   async add(fontpath) {
+    let result = {}
     fontpath = path.normalize(fontpath)
 
     if (this.isAlreadyLoaded(fontpath)) {
-      return Error(`Font ${fontpath} is already installed.`)
+      throw new Error(`Font at "${fontpath}" is already installed.`)
     }
 
     switch (process.platform) {
       case 'win32': 
-        const result = await execWinFontLoader(['add', fontpath])
-
-        if (result.status === 1) {
-          this.addToList(result)
-        }
-
-        this.emit('change', result)
-        return result
-
-      case 'darwin': // ln -s $PATH ~/Library/Fonts/$FILENAME
-        // const dar_fileName = path.parse(fontpath).base
-        // const dar_linkPath = path.normalize(`~/Library/Fonts/${dar_fileName}`)
-        // try {
-        //   await symlink(fontpath, dar_linkPath)
-        // } catch(err) {
-        //   return {status: 0, path: dar_linkPath, type: 'add'}
-        // }
-
-        // return {status: 1, path: dar_linkPath, type: 'add'}
-
-      case 'linux': // ln -s '/home/sam/Downloads/Oxygen-Regular.ttf' /home/sam/.local/share/fonts/
-        // const lin_fileName = path.parse(fontpath).base
-        // const lin_linkPath = path.normalize(`~/.local/share/fonts/${lin_fileName}`)
-        // try {
-        //   await symlink(fontpath, lin_linkPath)
-        // } catch(err) {
-        //   return {status: 0, path: lin_linkPath, type: 'add'}
-        // }
-
-        // return {status: 1, path: lin_linkPath, type: 'add'}
-
+        result = await this.installOnWindows(fontpath)
+        break
+      case 'darwin': 
+        // result = await this.installOnDarwin(fontpath)
+        // break
+      case 'linux': 
+        // result = await this.installOnLinux(fontpath)
+        // break
       case 'freebsd':
       case 'sunos':
-
       default:
         throw new Error(`${process.platform} is not supported.`)
     }
+
+    if (result.status === 1) {
+      this.addToList(result)
+    }
+
+    this.emit('change', result)
+    return result
   }
 
   // unloads a font
   async remove(fontpath) {
+    let result = {}
     fontpath = path.normalize(fontpath)
 
     if (this.isAlreadyLoaded(fontpath) === false) {
-      return Error(`Font is not loaded ${fontpath}.`)
+      throw new Error(`Font at "${fontpath}" is not loaded.`)
     }
 
     switch (process.platform) {
       case 'win32': 
-        const result = await execWinFontLoader(['remove', fontpath])
-
-        if (result.status === 1) {
-          this.removeFromList(result)
-        }
-
-        this.emit('change', result)
-        return result
-
+        result = await this.removeOnWindows(fontpath)
+        break
       case 'darwin':
       case 'linux':
-        // try {
-        //   await unlink(fontpath)
-        // } catch(err) {
-        //   return {status: 0, path: fontpath, type: 'remove'}
-        // }
-
-        // return {status: 1, path: fontpath, type: 'remove'}
-
+        // result = await this.removeOnUnix(fontpath)
+        // break
       case 'freebsd':
       case 'sunos':
-
       default:
         throw new Error(`${process.platform} is not supported.`)
     }
+
+    if (result.status === 1) {
+      this.removeFromList(result)
+    }
+
+    this.emit('change', result)
+    return result
   }
 
   // unloads all fonts that are installed
