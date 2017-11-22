@@ -96,7 +96,7 @@ const createWindow = async () => {
   })
 
   mainWindow.setMenu(null)
-  // mainWindow.webContents.openDevTools()
+  mainWindow.webContents.openDevTools()
 
   const devPath = 'http://localhost:8000/start'
 

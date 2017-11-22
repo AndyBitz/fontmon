@@ -16,6 +16,7 @@ class Fontmon extends EventEmitter {
   constructor() {
     super()
 
+    // pass events from loader up to fontmon
     loader.on('change', (status) => {
       this.emit('change', status)
     })
@@ -28,24 +29,14 @@ class Fontmon extends EventEmitter {
 
   // use FileList to load all fonts
   // or all fonts within directories
-  async loadList(list) {
-    let fileList = []
-    let statusList = []
-
-    const length = list.length
+  async loadList(fileList) {
+    const length = fileList.length
 
     for (let i=0; i < length; i++) {
-      const cFileList = await loader.readDir(list.item(i).path)
-      fileList = fileList.concat(cFileList)
+      const item = fileList.item(i).path
+      const list = await loader.readDir(item)
+      list.map((file) => loader.add(file))
     }
-
-    for (let i in fileList) {
-      const file = fileList[i]
-      statusList.push(await loader.add(file))
-    }
-
-    // will dispatch one array with the status to each font added
-    this.emit('change', statusList)
   }
 }
 
