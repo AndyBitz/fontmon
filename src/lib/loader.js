@@ -1,43 +1,17 @@
 // The Loader singleton class will handle
 // all the work when fonts are
 // added or removed to the system.
-// It does not emit any events.
 
-const {execFile} = require('child_process')
 const path = require('path')
 const {promisify} = require('util')
 const fs = require('fs')
 const EventEmitter = require('events')
+const {execWinFontLoader} = require('./exec')
 
 const readdir = promisify(fs.readdir)
 const stat = promisify(fs.stat)
 const symlink = promisify(fs.symlink)
 const unlink = promisify(fs.unlink)
-
-
-// execute a file and return it's stdout
-const asyncExec = (cmd, args) => new Promise((res, rej) => {
-  const options = { windowsHide: true }
-
-  const callback = (error, stdout, stderr) => {
-    if (error || stderr) {
-      rej(error || stderr)
-    }
-
-    res(stdout)
-  }
-
-  execFile(cmd, args, options, callback)
-})
-
-// executs the fontloader.exe for windows with the given arguments
-// arguments are either add or remove and the fontpath
-const execWinFontloader = async (args) => {
-  const exe = path.normalize(`${__dirname}/../execs/cli-fontloader.exe`)
-  const result = await asyncExec(exe, args)
-  const fixPath = result.replace(/\\/g, '\\\\')
-  return JSON.parse(fixPath)
-}
 
 
 class Loader extends EventEmitter {
@@ -68,7 +42,7 @@ class Loader extends EventEmitter {
 
     switch (process.platform) {
       case 'win32': 
-        const result = await execWinFontloader(['add', fontpath])
+        const result = await execWinFontLoader(['add', fontpath])
 
         if (result.status === 1) {
           this.addToList(result)
@@ -117,7 +91,7 @@ class Loader extends EventEmitter {
 
     switch (process.platform) {
       case 'win32': 
-        const result = await execWinFontloader(['remove', fontpath])
+        const result = await execWinFontLoader(['remove', fontpath])
 
         if (result.status === 1) {
           this.removeFromList(result)
