@@ -7,6 +7,7 @@ const {execFile} = require('child_process')
 const path = require('path')
 const {promisify} = require('util')
 const fs = require('fs')
+const EventEmitter = require('events')
 
 const readdir = promisify(fs.readdir)
 const stat = promisify(fs.stat)
@@ -39,8 +40,9 @@ const execWinFontloader = async (args) => {
 }
 
 
-class Loader {
+class Loader extends EventEmitter {
   constructor() {
+    super()
     this.loadedFonts = []
   }
 
@@ -72,29 +74,30 @@ class Loader {
           this.addToList(result)
         }
 
+        this.emit('change', result)
         return result
 
       case 'darwin': // ln -s $PATH ~/Library/Fonts/$FILENAME
-        const dar_fileName = path.parse(fontpath).base
-        const dar_linkPath = path.normalize(`~/Library/Fonts/${dar_fileName}`)
-        try {
-          await symlink(fontpath, dar_linkPath)
-        } catch(err) {
-          return {status: 0, path: dar_linkPath, type: 'add'}
-        }
+        // const dar_fileName = path.parse(fontpath).base
+        // const dar_linkPath = path.normalize(`~/Library/Fonts/${dar_fileName}`)
+        // try {
+        //   await symlink(fontpath, dar_linkPath)
+        // } catch(err) {
+        //   return {status: 0, path: dar_linkPath, type: 'add'}
+        // }
 
-        return {status: 1, path: dar_linkPath, type: 'add'}
+        // return {status: 1, path: dar_linkPath, type: 'add'}
 
       case 'linux': // ln -s '/home/sam/Downloads/Oxygen-Regular.ttf' /home/sam/.local/share/fonts/
-        const lin_fileName = path.parse(fontpath).base
-        const lin_linkPath = path.normalize(`~/.local/share/fonts/${lin_fileName}`)
-        try {
-          await symlink(fontpath, lin_linkPath)
-        } catch(err) {
-          return {status: 0, path: lin_linkPath, type: 'add'}
-        }
+        // const lin_fileName = path.parse(fontpath).base
+        // const lin_linkPath = path.normalize(`~/.local/share/fonts/${lin_fileName}`)
+        // try {
+        //   await symlink(fontpath, lin_linkPath)
+        // } catch(err) {
+        //   return {status: 0, path: lin_linkPath, type: 'add'}
+        // }
 
-        return {status: 1, path: lin_linkPath, type: 'add'}
+        // return {status: 1, path: lin_linkPath, type: 'add'}
 
       case 'freebsd':
       case 'sunos':
@@ -120,17 +123,18 @@ class Loader {
           this.removeFromList(result)
         }
 
+        this.emit('change', result)
         return result
 
       case 'darwin':
       case 'linux':
-        try {
-          await unlink(fontpath)
-        } catch(err) {
-          return {status: 0, path: fontpath, type: 'remove'}
-        }
+        // try {
+        //   await unlink(fontpath)
+        // } catch(err) {
+        //   return {status: 0, path: fontpath, type: 'remove'}
+        // }
 
-        return {status: 1, path: fontpath, type: 'remove'}
+        // return {status: 1, path: fontpath, type: 'remove'}
 
       case 'freebsd':
       case 'sunos':
@@ -161,7 +165,8 @@ class Loader {
   addToList(result) {
     this.loadedFonts.push({
       path: result.path,
-      fileName: path.parse(result.path).base
+      fileName: path.parse(result.path).base,
+      remove: () => this.remove(result.path)
     })
   }
 

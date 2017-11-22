@@ -42,7 +42,7 @@ if (isSecondInstance) {
   app.quit()
 }
 
-// updates
+// set update server
 const server = `https://releases.fontmon.now.sh`
 const feed = `${server}/update/${process.platform}/${app.getVersion()}`
 

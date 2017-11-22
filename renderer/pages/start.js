@@ -44,7 +44,7 @@ export default class extends Component {
     document.addEventListener('drop', this.onDrop, false)
 
     // fontmon changes
-    this.fontmon.subscribe(this.onFontmonChange)
+    this.fontmon.on('change', this.onFontmonChange)
   }
 
   componentWillUnmount() {
@@ -55,7 +55,7 @@ export default class extends Component {
     document.removeEventListener('drop', this.onDrop, false)
 
     // destroy fontmon subscribers
-    this.fontmon.unsubscribe(this.onFontmonChange)
+    this.fontmon.removeListener('change', this.onFontmonChange)
   }
 
   // call whenever a font gets added or removed
