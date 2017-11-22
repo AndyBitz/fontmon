@@ -141,7 +141,8 @@ class Loader extends EventEmitter {
     }
 
     for (let i in loadedFontsCopy) {
-      status.push(await this.remove(loadedFontsCopy[i].path))
+      const fontpath = loadedFontsCopy[i].path
+      status.push(await this.remove(fontpath))
     }
 
     return status
