@@ -1,7 +1,7 @@
 
 
 // Packages
-const {app} = require('electron')
+const {app, Notification} = require('electron')
 const isDev = require('electron-is-dev')
 const prepareNext = require('electron-next')
 const {resolve} = require('app-root-path')
@@ -48,8 +48,10 @@ if (isSecondInstance) {
 
 // Prepare the renderer once the app is ready
 app.on('ready', async () => {
-  mainWindow = await createWindow(app)
+  mainWindow = await createWindow()
   tray = createTrayIcon(mainWindow)
+
+  // Fix: Windows won't allow notifications
 })
 
 // handle before quitting

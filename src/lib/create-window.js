@@ -5,10 +5,8 @@ const prepareNext = require('electron-next')
 const {resolve} = require('app-root-path')
 
 
-module.exports = async (mainApp) => {
+module.exports = async () => {
   await prepareNext('./renderer')
-
-  console.log(app === mainApp)
 
   const windowIconPath = (process.platform === 'win32')
     ? resolve(`/assets/icons/windows.ico`)
