@@ -20,6 +20,7 @@ export default class extends Component {
     this.onDragLeave = this.onDragLeave.bind(this)
     this.onDragOver = this.onDragOver.bind(this)
     this.onDrop = this.onDrop.bind(this)
+    this.log = this.log.bind(this)
 
     // default state
     this.state = {
@@ -46,6 +47,8 @@ export default class extends Component {
 
     // fontmon changes
     this.fontmon.on('change', this.onFontmonChange)
+
+    window.log = (txt) => this.log(txt)
   }
 
   componentWillUnmount() {
@@ -69,7 +72,11 @@ export default class extends Component {
   }
 
   handleResult(result) {
-    console.dir(result)
+    if (result instanceof Error) {
+      this.log(result.message)
+    } else if (result.status === 0) {
+      this.log(`Failed to ${result.type} ${result.path}`)
+    }
   }
 
   onDragEnter(event) {
@@ -95,6 +102,12 @@ export default class extends Component {
       .then(() => {
         this.setState({ isLoading: false })
       })
+  }
+
+  log(message) {
+    let notify = new Notification('Fontmon', {
+      body: message
+    })
   }
 
   render() {

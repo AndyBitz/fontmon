@@ -8,7 +8,8 @@ const {
   Tray,
   Menu,
   dialog,
-  autoUpdater
+  autoUpdater,
+  webContents
 } = require('electron')
 const isDev = require('electron-is-dev')
 const prepareNext = require('electron-next')
@@ -25,6 +26,8 @@ const loader = require('./lib/loader')
 // globals
 let mainWindow
 let tray
+
+app.setAppUserModelId('io.fontmon.app')
 
 // only one process
 const isSecondInstance = app.makeSingleInstance((commandLine, workingDirectory) => {
