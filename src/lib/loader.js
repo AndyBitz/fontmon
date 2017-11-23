@@ -3,6 +3,8 @@
 // added or removed to the system.
 // It will emit the 'change' event when add or remove is called.
 
+const {app} = require('electron')
+
 const path = require('path')
 const {promisify} = require('util')
 const fs = require('fs')
@@ -82,7 +84,11 @@ class Loader extends EventEmitter {
       this.addToList(result)
     }
 
-    this.emit('change', result)
+    if (app.isQuitting === undefined) {
+      // don't emit when quitting
+      this.emit('change', result)
+    }
+
     return result
   }
 
@@ -100,7 +106,11 @@ class Loader extends EventEmitter {
       this.removeFromList(result)
     }
 
-    this.emit('change', result)
+    if (app.isQuitting === undefined) {
+      // don't emit when quitting
+      this.emit('change', result)
+    }
+
     return result
   }
 
