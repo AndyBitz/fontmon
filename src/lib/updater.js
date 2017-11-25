@@ -3,7 +3,7 @@ const {dialog, autoUpdater, app} = require('electron')
 
 module.exports = () => {
   // set update server
-  const server = `https://releases.fontmon.now.sh`
+  const server = `https://releases.fontmon.notsosocial.net`
   const feed = `${server}/update/${process.platform}/${app.getVersion()}`
 
   // set url
