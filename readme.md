@@ -2,7 +2,7 @@
 
 # fontmon
 
-An ease to use _fontmanager_ made with electron.
+An easy to use _fontmanager_ made with electron.
 
 
 ## Usage
