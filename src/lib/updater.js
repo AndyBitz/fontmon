@@ -1,4 +1,4 @@
-const {dialog, autoUpdater} = require('electron')
+const {dialog, autoUpdater, app} = require('electron')
 
 
 module.exports = () => {

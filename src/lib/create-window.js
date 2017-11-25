@@ -1,5 +1,5 @@
 const {format} = require('url')
-const {BrowserWindow, app} = require('electron')
+const {BrowserWindow} = require('electron')
 const isDev = require('electron-is-dev')
 const prepareNext = require('electron-next')
 const {resolve} = require('app-root-path')
@@ -22,7 +22,10 @@ module.exports = async () => {
   })
 
   mainWindow.setMenu(null)
-  mainWindow.webContents.openDevTools()
+
+  if (isDev) {
+    mainWindow.webContents.openDevTools()
+  }
 
   const devPath = 'http://localhost:8000/start'
 
