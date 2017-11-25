@@ -44,30 +44,43 @@ class Loader extends EventEmitter {
   }
 
   async installOnDarwin(fontpath) {
-    // ln -s $PATH ~/Library/Fonts/$FILENAME
+    // ln -s $fontpath ~/Library/Fonts/$filename
 
-    // const dar_fileName = path.parse(fontpath).base
-    // const dar_linkPath = path.normalize(`~/Library/Fonts/${dar_fileName}`)
-    // needs try-catch
-    // await symlink(fontpath, dar_linkPath)
+    const fileName = path.parse(fontpath).base
+    const linkPath = path.normalize(`~/Library/Fonts/${fileName}`)
 
-    // return {status: 1, path: dar_linkPath, type: 'add'}
+    try {
+      await symlink(fontpath, linkPath)
+    } catch(err) {
+      return {status: 0, path: fontpath, type: 'add'}
+    }
+
+    return {status: 1, path: linkPath, type: 'add'}
   }
 
   async installOnLinux(fontpath) {
-    // ln -s '/home/sam/Downloads/Oxygen-Regular.ttf' /home/sam/.local/share/fonts/
+    // ln -s $fontpath ~/.local/share/fonts/
 
-    // const lin_fileName = path.parse(fontpath).base
-    // const lin_linkPath = path.normalize(`~/.local/share/fonts/${lin_fileName}`)
-    // needs try-catch
-    // await symlink(fontpath, lin_linkPath)
+    const fileName = path.parse(fontpath).base
+    const linkPath = path.normalize(`~/.local/share/fonts/${fileName}`)
 
-    // return {status: 1, path: lin_linkPath, type: 'add'}
+    try {
+      await symlink(fontpath, linkPath)
+    } catch(err) {
+      return {status: 0, path: fontpath, type: 'add'}
+    }
+
+    return {status: 1, path: linkPath, type: 'add'}
   }
 
   async removeOnUnix(fontpath) {
-    // await unlink(fontpath)
-    // return {status: 1, path: fontpath, type: 'remove'}
+    try {
+      await unlink(fontpath)
+    } catch(err) {
+      return {status: 0, path: fontpath, type: 'remove'}
+    }
+
+    return {status: 1, path: fontpath, type: 'remove'}
   }
 
   // loads a font
