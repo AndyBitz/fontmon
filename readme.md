@@ -32,6 +32,8 @@ Fontmon is currently only available for Windows, this is due to the fact that wi
 
 Mac and Linux support should be coming soon, or if it takes you too long you can contribute yourself.
 
+You can download the latest version [here](https://github.com/AndyBitz/fontmon/releases)
+
 ## Contributing
 
 1. Fork this repository to your own GitHub account and then clone it to your local device
