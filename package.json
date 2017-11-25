@@ -11,7 +11,7 @@
     "dist": "npm run build && build -w"
   },
   "build": {
-    "appId": "io.fontmon.app",
+    "appId": "net.notsosocial.fontmon",
     "files": [
       "**/*",
       "!renderer",

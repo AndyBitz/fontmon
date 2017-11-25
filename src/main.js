@@ -12,7 +12,7 @@ const loader = require('./lib/loader')
 const createTrayIcon = require('./lib/tray-icon')
 const createWindow = require('./lib/create-window')
 
-const appId = 'io.fontmon.app'
+const appId = 'net.notsosocial.fontmon'
 
 // installer
 if(require('electron-squirrel-startup')) {
