@@ -1,6 +1,6 @@
 {
   "name": "fontmon",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A fontmanger made with electron",
   "main": "./src/main.js",
   "scripts": {
@@ -37,14 +37,6 @@
   "keywords": [],
   "author": "Andy Bitz",
   "license": "MIT",
-  "babel": {
-    "presets": [
-      "next/babel"
-    ],
-    "plugins": [
-      "inline-react-svg"
-    ]
-  },
   "dependencies": {
     "app-root-path": "^2.0.1",
     "electron-is-dev": "^0.3.0",
@@ -52,13 +44,12 @@
     "electron-squirrel-startup": "^1.0.0"
   },
   "devDependencies": {
-    "babel-plugin-inline-react-svg": "^0.4.0",
     "electron": "^1.8.2-beta.2",
-    "electron-builder": "^19.45.5",
-    "electron-builder-lib": "^19.46.3",
-    "electron-builder-squirrel-windows": "^19.46.0",
-    "next": "^4.1.4",
-    "react": "^16.0.0",
-    "react-dom": "^16.0.0"
+    "electron-builder": "^19.55.3",
+    "electron-builder-lib": "^19.56.2",
+    "electron-builder-squirrel-windows": "^19.56.0",
+    "next": "^4.2.3",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0"
   }
 }

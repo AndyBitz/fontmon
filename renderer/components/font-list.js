@@ -2,7 +2,7 @@
 import {Component} from 'react'
 
 // icons
-import CloseIcon from '../vectors/close.svg'
+import CloseIcon from '../vectors/close'
 
 
 export default ({fonts}) => (
