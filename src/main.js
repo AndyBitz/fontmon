@@ -6,7 +6,7 @@ const isDev = require('electron-is-dev')
 const prepareNext = require('electron-next')
 const {resolve} = require('app-root-path')
 
-// lib
+// Lib
 const updater = require('./lib/updater')
 const loader = require('./lib/loader')
 const createTrayIcon = require('./lib/tray-icon')
@@ -14,23 +14,23 @@ const createWindow = require('./lib/create-window')
 
 const appId = 'net.notsosocial.fontmon'
 
-// installer
+// Installer
 if(require('electron-squirrel-startup')) {
   app.quit()
 }
 
 if (isDev === false) {
-  // activate updates
+  // Activate updates
   updater()
 }
 
-// globals
+// Globals
 let mainWindow
 let tray
 
 app.setAppUserModelId(appId)
 
-// only one process
+// Only one process
 const isSecondInstance = app.makeSingleInstance(() => {
   // Someone tried to run a second instance, we should focus our window.
   if (mainWindow) {
@@ -54,13 +54,13 @@ app.on('ready', async () => {
   // Fix: Windows won't allow notifications
 })
 
-// handle before quitting
+// Handle before quitting
 app.on('will-quit', (event) => {
 
   if (app.isUnloaded === undefined) {
     event.preventDefault()
 
-    // unload all fonts before quitting
+    // Unload all fonts before quitting
     loader.unloadAll()
       .then((status) => {
         app.isUnloaded = true
